@@ -67,7 +67,6 @@ const notFound = (request, response) => {
 
 module.exports = {
     getUsers,
-    notReal,
     addUser,
     notFound,
 };

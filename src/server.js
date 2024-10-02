@@ -1,10 +1,33 @@
 const http = require('http');
 const query = require('querystring');
+const fs = require('fs');
+const path = rquire('path');
 
 const jsonHandler = require('./jsonResponses.js');
 const htmlHandler = require('./htmlResponses.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
+
+const booksPath = path.join(__dirname, './assets/books.json');
+
+// loads and parses the books.json file
+const loadBooks = () => {
+    try {
+        const jsonBooks = fs.readFileSync(booksPath, 'utf-8');
+        return JSON.parse(jsonBooks);
+    } catch(error) {
+        console.error('Error reading or parsing JSON file:', error);
+        return null;
+    }
+}
+
+// stores parsed books into an object
+const books = loadData;
+
+// returns the parsed books object
+const getBooks = () => {
+    return books;
+}
 
 const parseBody = (request, response, handler) => {
     const body = [];
@@ -59,3 +82,7 @@ const onRequest = (request, response) => {
   http.createServer(onRequest).listen(port, () => {
     console.log(`Listening on 127.0.0.1: ${port}`);
   });
+
+module.exports = {
+    getBooks
+}
