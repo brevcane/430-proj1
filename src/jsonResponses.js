@@ -80,8 +80,15 @@ const getTitles = (request, response) => {
   return respond(request, response, 200, responseJSON);
 };
 
+//getAuthor
+// returns all books by a specific author
+const getAuthor = (request, response) => {
+  
+}
+
 module.exports = {
     getBooks,
     addBook,
+    getTitles,
     notFound,
 };
