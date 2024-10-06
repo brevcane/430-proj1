@@ -43,8 +43,8 @@ const handleGet = (request, response, parsedUrl) => {
     jsonHandler.getBooks(request, response);
   } else if (parsedUrl.pathname === '/getTitles') {
     jsonHandler.getTitles(request, response);
-  // } else if (parsedUrl.pathname === '/getBook') {
-  //   jsonHandler.getBook(request, response);
+  } else if (parsedUrl.pathname === '/getBook') {
+    jsonHandler.getBook(request, response);
   } else if (parsedUrl.pathname === '/getAuthor') {
     jsonHandler.getAuthor(request, response);
   } else if (parsedUrl.pathname === '/notFound') {

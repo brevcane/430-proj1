@@ -85,6 +85,22 @@
     handleResponse(response, true);
 };
 
+const requestBook = async (getBookForm) => {
+    const url = getBookForm.getAttribute('action');
+    const method = getBookForm.getAttribute('method');
+
+    const title = getBookForm.querySelector('#titleField').value;
+
+    const response = await fetch(`${url}?title=${encodeURIComponent(title)}`, {
+        method: method,
+        headers: {
+            'Accept': 'application/json',
+        },
+    });
+
+    handleResponse(response, true);
+};
+
 const sendFetch = async (url) => {
       let response = await fetch(url);
 
@@ -96,6 +112,7 @@ const sendFetch = async (url) => {
       const booksButton = document.querySelector('#getBooks');
       const titlesButton = document.querySelector('#getTitles');
       const authorForm = document.querySelector('#authorForm');
+      const getBookForm = document.querySelector('#getBookForm');
 
       const getBooks = () => sendFetch('/getBooks');
       const getTitles = () => sendFetch('/getTitles');
@@ -105,9 +122,15 @@ const sendFetch = async (url) => {
         requestAuthor(authorForm);
       }
 
+      const getBook = (e) => {
+        e.preventDefault();
+        requestBook(getBookForm);
+      }
+
       booksButton.addEventListener('click', getBooks);
       titlesButton.addEventListener('click', getTitles);
       authorForm.addEventListener('submit', getAuthor);
+      getBookForm.addEventListener('submit', getBook);
     };
 
     window.onload = init;

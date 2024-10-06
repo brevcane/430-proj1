@@ -96,9 +96,8 @@ const getAuthor = (request, response) => {
   const responseJSON = {};
   let responseCode = 400;
 
-  // Extract the author from the query parameters
   const { searchParams } = new URL(request.url, `http://${request.headers.host}`);
-  const author = searchParams.get('author'); // Use searchParams to get the author
+  const author = searchParams.get('author');
 
   if (!author) {
     responseJSON.message = 'Author name required.';
@@ -121,19 +120,40 @@ const getAuthor = (request, response) => {
 
 // getBook
 // returns a book by title
-// const getBook = (request, response) => {
+const getBook = (request, response) => {
+  const responseJSON = {};
+  let responseCode = 400;
 
-// };
+  const { searchParams } = new URL(request.url, `http://${request.headers.host}`);
+  const title = searchParams.get('title');
+
+  if (!title) {
+    responseJSON.message = 'Book title required.';
+    responseJSON.id = 'addUserMissingParams';
+    return respond(request, response, responseCode, responseJSON);
+  }
+
+  const book = books.filter((book) => book.title.toLowerCase() === title.toLowerCase());
+
+  if (book.length === 0) {
+    responseJSON.message = 'Book not found.';
+    return respond(request, response, responseCode, responseJSON);
+  }
+
+  responseCode = 200;
+  responseJSON.book = book;
+  return respond(request, response, responseCode, responseJSON);
+};
 
 // // rateBook
 // // adds a rating to a book
-// const rateBook = (request, response) => {
+const rateBook = (request, response) => {
 
-// };
+};
 
 module.exports = {
   getBooks,
-  // getBook,
+  getBook,
   // rateBook,
   getAuthor,
   addBook,
