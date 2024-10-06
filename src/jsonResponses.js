@@ -1,4 +1,5 @@
-const users = {};
+const server = require('./server.js');
+const books = server.getBooks();
 
 const respond = (request, response, status, object) => {
     const content = JSON.stringify(object);
@@ -15,38 +16,40 @@ const respond = (request, response, status, object) => {
 };
 
 //getBooks
-const getUsers = (request, response) => {
+// returns all books
+const getBooks = (request, response) => {
     const responseJSON = {
-        users
+        books
     };
 
     return respond(request, response, 200, responseJSON);
 }
 
 //addBook
-const addUser = (request, response) => {
+// adds a book to books.json, requires a title and author
+const addBook = (request, response) => {
   const responseJSON = {
-    message: 'Name and age are both required.',
+    message: 'Title and author are both required.',
   };
 
-  const { name, age } = request.body;
+  const { title, author } = request.body;
 
 
-  if (!name || !age) {
+  if (!title || !author) {
     responseJSON.id = 'addUserMissingParams';
     return respondJSON(request, response, 400, responseJSON);
   }
 
   let responseCode = 204;
 
-  if (!users[name]) {
+  if (!users[title]) {
     responseCode = 201;
-    users[name] = {
-      name: name,
+    users[title] = {
+      title: title,
     };
   }
 
-  users[name].age = age;
+  users[title].author = author;
 
   if (responseCode === 201) {
     responseJSON.message = 'Created Successfully';
@@ -65,8 +68,20 @@ const notFound = (request, response) => {
     return respond(request, response, 404, responseJSON);
 };
 
+//getTitles
+// returns all the book titles
+const getTitles = (request, response) => {
+  const titles = books.map(book => book.title);
+
+  const responseJSON = {
+    titles
+  };
+
+  return respond(request, response, 200, responseJSON);
+};
+
 module.exports = {
-    getUsers,
-    addUser,
+    getBooks,
+    addBook,
     notFound,
 };
