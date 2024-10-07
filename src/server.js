@@ -6,8 +6,6 @@ const htmlHandler = require('./htmlResponses.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
-const getBooks = () => books;
-
 const parseBody = (request, response, handler) => {
   const body = [];
 

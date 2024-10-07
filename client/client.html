@@ -101,6 +101,48 @@ const requestBook = async (getBookForm) => {
     handleResponse(response, true);
 };
 
+const rateBook = async (rateBookForm) => {
+  const url = rateBookForm.getAttribute('action');
+  const method = rateBookForm.getAttribute('method');
+
+  const title = rateBookForm.querySelector('#rateTitleField').value;
+  const rating = rateBookForm.querySelector('#ratingField').value;
+
+  const formData = `title=${encodeURIComponent(title)}&rating=${encodeURIComponent(rating)}`;
+
+  let response = await fetch(url, {
+    method: method,
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Accept': 'application/json',
+    },
+    body: formData,
+  });
+
+  handleResponse(response);
+};
+
+const addNewBook = async (addBookForm) => {
+  const url = addBookForm.getAttribute('action');
+  const method = addBookForm.getAttribute('method');
+
+  const title = addBookForm.querySelector('#titleField');
+  const author = addBookForm.querySelector('#authorField');
+
+  const formData = `title=${encodeURIComponent(title.value)}&author=${encodeURIComponent(author.value)}`;
+
+  let response = await fetch(url, {
+    method: method,
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Accept': 'application/json',
+    },
+    body: formData,
+  });
+
+  handleResponse(response);
+};
+
 const sendFetch = async (url) => {
       let response = await fetch(url);
 
@@ -113,9 +155,17 @@ const sendFetch = async (url) => {
       const titlesButton = document.querySelector('#getTitles');
       const authorForm = document.querySelector('#authorForm');
       const getBookForm = document.querySelector('#getBookForm');
+      const addBookForm = document.querySelector('#addBookForm');
+      const rateBookForm = document.querySelector('#rateBookForm');
 
       const getBooks = () => sendFetch('/getBooks');
       const getTitles = () => sendFetch('/getTitles');
+
+      const handleRateBook = (e) => {
+        e.preventDefault();
+        rateBook(rateBookForm);
+        return false;
+      }
 
       const getAuthor = (e) => {
         e.preventDefault();
@@ -125,12 +175,21 @@ const sendFetch = async (url) => {
       const getBook = (e) => {
         e.preventDefault();
         requestBook(getBookForm);
+        return false;
       }
 
+      const handleBook = (e) => {
+        e.preventDefault();
+        addNewBook(addBookForm);
+        return false;
+      }
+
+      rateBookForm.addEventListener('submit', handleRateBook);
       booksButton.addEventListener('click', getBooks);
       titlesButton.addEventListener('click', getTitles);
       authorForm.addEventListener('submit', getAuthor);
       getBookForm.addEventListener('submit', getBook);
+      addBookForm.addEventListener('submit', handleBook);
     };
 
     window.onload = init;
@@ -165,9 +224,23 @@ const sendFetch = async (url) => {
     </div>
     <div>
       <h3>addBook [POST]</h3>
+      <form id="addBookForm" action="/addBook" method="post">
+        <label for="title">Title: </label>
+        <input id="titleField" type="text" name="title" />
+        <label for="author">Author: </label>
+        <input id="authorField" type="text" name="author" />
+        <input type="submit" value="Add book" />
+      </form>
     </div>
     <div>
       <h3>rateBook [POST]</h3>
+      <form id="rateBookForm" action="/rateBook" method="post">
+        <label for="rateTitle">Title: </label>
+        <input id="rateTitleField" type="text" name="title" />
+        <label for="rating">Rating (1-5): </label>
+        <input id="ratingField" type="number" name="rating" min="1" max="5" />
+        <input type="submit" value="Rate Book" />
+      </form>
     </div>
   </section>
   <section id="content">
