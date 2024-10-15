@@ -22,9 +22,9 @@ const respond = (request, response, status, object) => {
   response.end();
 };
 
-// function to find a book by its title (I learned i was accessing books by using titles as a key which was wrong so I made this function to help)
+// function to find a book by its title
 const findBookByTitle = (title) => {
-  return books.find((book) => book.title.toLowerCase() === title.toLowerCase());
+  books.find((book) => book.title.toLowerCase() === title.toLowerCase());
 };
 
 // AddBook function
@@ -50,14 +50,12 @@ const addBook = (request, response) => {
     };
     books.push(book);
   } else {
-    // did some research and learned the status code for something already existing is supposed to be 409
-    responseJSON.message = "Book already exists.";
+    // did some research and learned the status code for something already existing is 409
+    responseJSON.message = 'Book already exists.';
     return respond(request, response, 409, responseJSON);
   }
 
-  if (responseCode === 201) {
-    return respond(request, response, responseCode, {});
-  }
+  return respond(request, response, responseCode, {});
 };
 
 // GetBooks function
@@ -92,7 +90,7 @@ const getAuthor = (request, response) => {
   const responseJSON = {};
   let responseCode = 400;
 
-  const author = request.query.author;
+  const { author } = request.query;
 
   if (!author) {
     responseJSON.message = 'Author name required.';
@@ -119,7 +117,7 @@ const getBook = (request, response) => {
   const responseJSON = {};
   let responseCode = 400;
 
-  const title = request.query.title;
+  const { title } = request.query;
 
   if (!title) {
     responseJSON.message = 'Book title required.';
@@ -160,14 +158,13 @@ const rateBook = (request, response) => {
 
   if (!book) {
     responseJSON.message = 'Book not found.';
-    return respond(request, response, 404, responseJSON); 
+    return respond(request, response, 404, responseJSON);
   }
 
-  book.rating = rating; 
+  book.rating = rating;
 
   return respond(request, response, 204, {});
 };
-
 
 module.exports = {
   getBooks,
