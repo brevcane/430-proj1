@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>API Documentation</title>
+  <link rel="stylesheet" type="text/css" href="apiDoc.css">
+</head>
+
+<body>
+  <h1>API Documentation</h1>
+  
+  <section>
+    <div>
+      <h2>Get Books</h2>
+      <p><strong>Relative URL:</strong> /getBooks</p>
+      <p><strong>Supported Methods:</strong> GET, HEAD</p>
+      <p><strong>Returns:</strong> A JSON array of book objects.</p>
+      <pre>
+      Example:
+      [
+        {
+          "author": "Name",
+          "country": "America",
+          "language": "English",
+          "link": "Link",
+          "pages": 100,
+          "title": "Title",
+          "year": 2024,
+          "genres": [],
+        },
+        ...
+      ]
+      </pre>
+      <p><strong>Example Usage:</strong> <code>GET /getBooks</code></p>
+    </div>
+
+    <div>
+      <h2>Get Titles</h2>
+      <p><strong>Relative URL:</strong> /getTitles</p>
+      <p><strong>Supported Methods:</strong> GET, HEAD</p>
+      <p><strong>Returns:</strong> A JSON array of book titles.</p>
+      <pre>
+      Example:
+      [
+        "Title 1",
+        "Title 2",
+        ...
+      ]
+      </pre>
+      <p><strong>Example Usage:</strong> <code>GET /getTitles</code></p>
+    </div>
+
+    <div>
+      <h2>Get Author</h2>
+      <p><strong>Relative URL:</strong> /getAuthor</p>
+      <p><strong>Supported Methods:</strong> GET</p>
+      <p><strong>Query Params:</strong></p>
+      <div class="param">
+        <strong>author</strong> (string) - required
+      </div>
+      <p><strong>Returns:</strong> A JSON array of books by the specified author.</p>
+      <pre>
+      Example:
+      [
+      {
+        "author": "Name",
+        "country": "America",
+        "language": "English",
+        "link": "Link",
+        "pages": 100,
+        "title": "Title",
+        "year": 2024,
+        "genres": [],
+      },
+      ...
+    ]
+      </pre>
+      <p><strong>Example Usage:</strong> <code>GET /getAuthor?author=Author%20Name</code></p>
+    </div>
+
+    <div>
+      <h2>Get Book</h2>
+      <p><strong>Relative URL:</strong> /getBook</p>
+      <p><strong>Supported Methods:</strong> GET</p>
+      <p><strong>Query Params:</strong></p>
+      <div class="param">
+        <strong>title</strong> (string) - required
+      </div>
+      <p><strong>Returns:</strong> A JSON object of the book with the specified title.</p>
+      <pre>
+      Example:
+      {
+        "book": {
+            "author": "Name",
+            "country": "America",
+            "language": "English",
+            "link": "Link",
+            "pages": 100,
+            "title": "Title",
+            "year": 2024,
+            "genres": [],
+        }
+      }
+      </pre>
+      <p><strong>Example Usage:</strong> <code>GET /getBook?title=Book%20Title</code></p>
+    </div>
+
+    <div>
+      <h2>Add Book</h2>
+      <p><strong>Relative URL:</strong> /addBook</p>
+      <p><strong>Supported Methods:</strong> POST</p>
+      <p><strong>Body Params:</strong></p>
+      <div class="param">
+        <strong>title</strong> (string) - required
+      </div>
+      <div class="param">
+        <strong>author</strong> (string) - required
+      </div>
+      <p><strong>Returns:</strong> A confirmation message in JSON format.</p>
+      <pre>
+      Example:
+      {
+        "message": "Book added successfully."
+      }
+      </pre>
+      <p><strong>Example Usage:</strong> <code>POST /addBook</code> with body <code>{"title": "New Book", "author": "Author Name"}</code></p>
+    </div>
+
+    <div>
+      <h2>Rate Book</h2>
+      <p><strong>Relative URL:</strong> /rateBook</p>
+      <p><strong>Supported Methods:</strong> POST</p>
+      <p><strong>Body Params:</strong></p>
+      <div class="param">
+        <strong>title</strong> (string) - required
+      </div>
+      <div class="param">
+        <strong>rating</strong> (integer) - required (1-5)
+      </div>
+      <p><strong>Returns:</strong> A confirmation message in JSON format.</p>
+      <pre>
+      Example:
+      {
+        "message": "Book rated successfully."
+      }
+      </pre>
+      <p><strong>Example Usage:</strong> <code>POST /rateBook</code> with body <code>{"title": "Book Title", "rating": 5}</code></p>
+    </div>
+  </section>
+
+  <footer>
+    <div id="footer-div">
+      <h4>Links</h4>
+      <ul>
+        <li><a href="./client.html">Client Page</a></li>
+        <li><a href="">Project Documentation PDF</a></li>
+      </ul>
+    </div>
+  </footer>
+</body>
+
+</html>

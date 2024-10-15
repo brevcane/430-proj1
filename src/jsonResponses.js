@@ -84,7 +84,7 @@ const notFound = (request, response) => {
 const getTitles = (request, response) => {
   const titles = Object.values(books).map((book) => book.title);
   const responseJSON = {
-    titles,
+    books: titles,
   };
 
   return respond(request, response, 200, responseJSON);

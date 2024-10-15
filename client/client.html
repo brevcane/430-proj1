@@ -7,73 +7,56 @@
 
   <script>
 
-    const handleResponse = async (response, parseResponse) => {
-      const content = document.querySelector('#content');
-      // was getting an error with my 204 response for book rating so i had to make a placeholder for obj
-      let obj = "";
+const handleResponse = async (response, parseResponse) => {
+  const contentHeader = document.querySelector('#content-header');
+  const contentBody = document.querySelector('#content-body');
+  let obj = "";
 
-      switch (response.status) {
-        case 200:
-          content.innerHTML = `<b>Success</b>`;
-          break;
-        case 201:
-          content.innerHTML = `<b>Created</b>`;
-          break;
-        case 204:
-          content.innerHTML = `<b>Updated (No Content)</b>`;
-          break;
-        case 400:
-          content.innerHTML = `<b>Bad Request</b>`;
-          break;
-        case 404:
-          content.innerHTML = `<b>Not Found</b>`;
-          break;
-        case 409:
-          content.innerHTML = `<b>Conflict</b>`
-        default:
-          content.innerHTML = `<b>Error code not implemented.</b>`;
-          break;
-      };
+  switch (response.status) {
+    case 200:
+      contentHeader.innerHTML = `<b>Success:</b>`;
+      break;
+    case 201:
+      contentHeader.innerHTML = `<b>Created:</b>`;
+      break;
+    case 204:
+      contentHeader.innerHTML = `<b>Updated (No Content)</b>`;
+      break;
+    case 400:
+      contentHeader.innerHTML = `<b>Bad Request:</b>`;
+      break;
+    case 404:
+      contentHeader.innerHTML = `<b>Not Found</b>`;
+      break;
+    case 409:
+      contentHeader.innerHTML = `<b>Conflict</b>`;
+      break;
+    default:
+      contentHeader.innerHTML = `<b>Error code not implemented.</b>`;
+      break;
+  }
 
-      if (response.status !== 204) {
-        obj = await response.json();
+  if (response.status !== 204) {
+    obj = await response.json();
 
-        if (obj.message) {
-          let jsonString = obj.message;
-          content.innerHTML += `<p>${jsonString}</p>`;
-        } else if (parseResponse) {
-          let jsonString = JSON.stringify(obj);
-          content.innerHTML += `<p>${jsonString}</p>`;
-        } else {
-          content.innerHTML += '<p>Meta Data Received</p>';
-        }
-      }
-
-      console.log(obj);
+    if(obj.books) {
+      let jsonString = JSON.stringify(obj.books, null, 2);
+      contentBody.innerHTML = `<pre>${jsonString}</pre>`;
+    } else if (obj.message) {
+      let jsonString = obj.message;
+      contentBody.innerHTML = `<p>${jsonString}</p>`;
+    } else if (parseResponse) {
+      let jsonString = JSON.stringify(obj);
+      contentBody.innerHTML = `<p>${jsonString}</p>`;
+    } else {
+      contentBody.innerHTML = '<p>Meta Data Received</p>';
     }
+  }
 
+  console.log(obj);
+}
 
-    const sendPost = async (nameForm) => {
-      const url = nameForm.getAttribute('action');
-      const method = nameForm.getAttribute('method');
-
-      const name = nameForm.querySelector('#nameField');
-      const age = nameForm.querySelector('#ageField');
-
-      const formData = `name=${name.value}&age=${age.value}`;
-
-      let response = await fetch(url, {
-        method: method,
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Accept': 'application/json',
-        },
-        body: formData,
-      });
-
-      handleResponse(response);
-    };
-
+  // method used to request an author
     const requestAuthor = async (authorForm) => {
       const url = authorForm.getAttribute('action');
       const method = authorForm.getAttribute('method');
@@ -90,6 +73,7 @@
       handleResponse(response, true);
     };
 
+  // method used to request a book's title
     const requestBook = async (getBookForm) => {
       const url = getBookForm.getAttribute('action');
       const method = getBookForm.getAttribute('method');
@@ -106,6 +90,7 @@
       handleResponse(response, true);
     };
 
+    // method used to rate a book
     const rateBook = async (rateBookForm) => {
       const url = rateBookForm.getAttribute('action');
       const method = rateBookForm.getAttribute('method');
@@ -127,6 +112,7 @@
       handleResponse(response);
     };
 
+    // method used to add a new book given a title and an author
     const addNewBook = async (addBookForm) => {
       const url = addBookForm.getAttribute('action');
       const method = addBookForm.getAttribute('method');
@@ -162,6 +148,7 @@
       const getBookForm = document.querySelector('#getBookForm');
       const addBookForm = document.querySelector('#addBookForm');
       const rateBookForm = document.querySelector('#rateBookForm');
+      const clearButton = document.querySelector('#clearContent');
 
       const getBooks = () => sendFetch('/getBooks');
       const getTitles = () => sendFetch('/getTitles');
@@ -175,6 +162,7 @@
       const getAuthor = (e) => {
         e.preventDefault();
         requestAuthor(authorForm);
+        return false;
       }
 
       const getBook = (e) => {
@@ -189,12 +177,18 @@
         return false;
       }
 
+      const clearContent = () => {
+        document.querySelector('#content-header').innerHTML = 'Content';
+        document.querySelector('#content-body').innerHTML = '';
+      };
+
       rateBookForm.addEventListener('submit', handleRateBook);
       booksButton.addEventListener('click', getBooks);
       titlesButton.addEventListener('click', getTitles);
       authorForm.addEventListener('submit', getAuthor);
       getBookForm.addEventListener('submit', getBook);
       addBookForm.addEventListener('submit', handleBook);
+      clearButton.addEventListener('click', clearContent);
     };
 
     window.onload = init;
@@ -202,6 +196,7 @@
 </head>
 
 <body>
+  <h1>IGME.430 Proj 1</h1>
   <section id="top">
     <div>
       <h3>GetBooks [GET]</h3>
@@ -232,6 +227,7 @@
       <form id="addBookForm" action="/addBook" method="post">
         <label for="title">Title: </label>
         <input id="titleField" type="text" name="title" />
+        <br>
         <label for="author">Author: </label>
         <input id="authorField" type="text" name="author" />
         <input type="submit" value="Add book" />
@@ -242,14 +238,31 @@
       <form id="rateBookForm" action="/rateBook" method="post">
         <label for="rateTitle">Title: </label>
         <input id="rateTitleField" type="text" name="title" />
+        <br>
         <label for="rating">Rating (1-5): </label>
         <input id="ratingField" type="number" name="rating" min="1" max="5" />
         <input type="submit" value="Rate Book" />
       </form>
     </div>
+    <div>
+      <h3>Clear Content</h3>
+      <button id="clearContent">Clear Content</button>
+    </div>
   </section>
   <section id="content">
+    <div id="content-header">Content</div>
+    <br>
+    <div id="content-body"></div>
   </section>
+  <footer>
+    <div id="footer-div">
+      <h4>Links</h4>
+      <ul>
+        <li><a href="./apiDoc.html">API Documentation</a></li>
+        <li><a href="">Project Documentation PDF</a></li>
+      </ul>
+    </div>
+  </footer>
 </body>
 
 </html>

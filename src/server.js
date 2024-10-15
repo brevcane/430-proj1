@@ -47,6 +47,10 @@ const handleGet = (request, response, parsedUrl) => {
     jsonHandler.getAuthor(request, response);
   } else if (parsedUrl.pathname === '/notFound') {
     jsonHandler.notFound(request, response);
+  } else if (parsedUrl.pathname === '/apiDoc.html') {
+    htmlHandler.getDoc(request, response);
+  } else if (parsedUrl.pathname === '/apiDoc.css') {
+    htmlHandler.getDocCSS(request, response);
   } else {
     htmlHandler.getIndex(request, response);
   }
