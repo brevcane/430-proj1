@@ -29,8 +29,8 @@ const parseBody = (request, response, handler) => {
 const handlePost = (request, response, parsedUrl) => {
   if (parsedUrl.pathname === '/addBook') {
     parseBody(request, response, jsonHandler.addBook);
-  // } else if (parsedUrl.pathname === '/rateBook') {
-  //   parseBody(request, response, jsonHandler.rateBook);
+  } else if (parsedUrl.pathname === '/rateBook') {
+    parseBody(request, response, jsonHandler.rateBook);
   }
 };
 
@@ -55,6 +55,8 @@ const handleGet = (request, response, parsedUrl) => {
 const onRequest = (request, response) => {
   const protocol = request.connection.encrypted ? 'https' : 'http';
   const parsedUrl = new URL(request.url, `${protocol}://${request.headers.host}`);
+
+  request.query = Object.fromEntries(parsedUrl.searchParams.entries());
 
   if (request.method === 'POST') {
     handlePost(request, response, parsedUrl);

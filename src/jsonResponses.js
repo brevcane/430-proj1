@@ -2,21 +2,11 @@ const fs = require('fs');
 const path = require('path');
 
 // Load and parse the books.json file once at the start
-let books = {};
-
-const loadBooks = () => {
-  try {
-    const jsonBooks = fs.readFileSync(
-      path.join(__dirname, '../assets/books.json'),
-      'utf-8',
-    );
-    books = JSON.parse(jsonBooks);
-  } catch (error) {
-    console.error('Error reading or parsing JSON file:', error);
-  }
-};
-
-loadBooks();
+const jsonBooks = fs.readFileSync(
+  path.join(__dirname, '../assets/books.json'),
+  'utf-8',
+);
+const books = JSON.parse(jsonBooks);
 
 const respond = (request, response, status, object) => {
   const content = JSON.stringify(object);
@@ -32,8 +22,12 @@ const respond = (request, response, status, object) => {
   response.end();
 };
 
-// addBook
-// adds a book to books.json, requires a title and author
+// function to find a book by its title (I learned i was accessing books by using titles as a key which was wrong so I made this function to help)
+const findBookByTitle = (title) => {
+  return books.find((book) => book.title.toLowerCase() === title.toLowerCase());
+};
+
+// AddBook function
 const addBook = (request, response) => {
   const responseJSON = {
     message: 'Title and author are both required.',
@@ -48,12 +42,17 @@ const addBook = (request, response) => {
 
   let responseCode = 204;
 
-  if (!books[title]) {
+  if (!findBookByTitle(title)) {
     responseCode = 201;
-    books[title] = {
+    const book = {
       title,
       author,
     };
+    books.push(book);
+  } else {
+    // did some research and learned the status code for something already existing is supposed to be 409
+    responseJSON.message = "Book already exists.";
+    return respond(request, response, 409, responseJSON);
   }
 
   if (responseCode === 201) {
@@ -64,8 +63,7 @@ const addBook = (request, response) => {
   return respond(request, response, responseCode, {});
 };
 
-// getBooks
-// returns all books
+// GetBooks function
 const getBooks = (request, response) => {
   const responseJSON = {
     books: Object.values(books),
@@ -82,8 +80,7 @@ const notFound = (request, response) => {
   return respond(request, response, 404, responseJSON);
 };
 
-// getTitles
-// returns all the book titles
+// GetTitles function
 const getTitles = (request, response) => {
   const titles = Object.values(books).map((book) => book.title);
   const responseJSON = {
@@ -93,14 +90,12 @@ const getTitles = (request, response) => {
   return respond(request, response, 200, responseJSON);
 };
 
-// getAuthor
-// returns all books by a specific author
+// GetAuthor function
 const getAuthor = (request, response) => {
   const responseJSON = {};
   let responseCode = 400;
 
-  const { searchParams } = new URL(request.url, `http://${request.headers.host}`);
-  const author = searchParams.get('author');
+  const author = request.query.author;
 
   if (!author) {
     responseJSON.message = 'Author name required.';
@@ -122,14 +117,12 @@ const getAuthor = (request, response) => {
   return respond(request, response, responseCode, responseJSON);
 };
 
-// getBook
-// returns a book by title
+// GetBook function
 const getBook = (request, response) => {
   const responseJSON = {};
   let responseCode = 400;
 
-  const { searchParams } = new URL(request.url, `http://${request.headers.host}`);
-  const title = searchParams.get('title');
+  const title = request.query.title;
 
   if (!title) {
     responseJSON.message = 'Book title required.';
@@ -154,8 +147,7 @@ const getBook = (request, response) => {
   return respond(request, response, responseCode, responseJSON);
 };
 
-// rateBook
-// adds a 1-5 rating to a book
+// RateBook function
 const rateBook = (request, response) => {
   const responseJSON = {};
   let responseCode = 400;
@@ -168,17 +160,24 @@ const rateBook = (request, response) => {
     return respond(request, response, responseCode, responseJSON);
   }
 
-  if (books[title]) {
-    books[title].rating = rating;
-    responseCode = 204;
-    responseJSON.message = 'Rating updated successfully';
-  } else {
+  const book = findBookByTitle(title);
+
+  if (!book) {
     responseJSON.message = 'Book not found.';
-    return respond(request, response, 404, responseJSON);
+    return respond(request, response, 404, responseJSON); 
   }
 
-  return respond(request, response, responseCode, responseJSON);
+  if (rating < 1 || rating > 5) {
+    responseJSON.message = 'Rating must be between 1 and 5.';
+    return respond(request, response, 400, responseJSON);
+  }
+
+  book.rating = rating; 
+  responseCode = 204; 
+
+  return respond(request, response, responseCode, {});
 };
+
 
 module.exports = {
   getBooks,

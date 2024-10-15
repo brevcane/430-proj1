@@ -7,9 +7,10 @@
 
   <script>
 
-// git hub actions
     const handleResponse = async (response, parseResponse) => {
       const content = document.querySelector('#content');
+      // was getting an error with my 204 response for book rating so i had to make a placeholder for obj
+      let obj = "";
 
       switch (response.status) {
         case 200:
@@ -27,21 +28,25 @@
         case 404:
           content.innerHTML = `<b>Not Found</b>`;
           break;
+        case 409:
+          content.innerHTML = `<b>Conflict</b>`
         default:
           content.innerHTML = `<b>Error code not implemented.</b>`;
           break;
       };
 
-      let obj = await response.json();
+      if (response.status !== 204) {
+        obj = await response.json();
 
-      if(obj.message) {
-        let jsonString = obj.message;
-        content.innerHTML += `<p>${jsonString}</p>`;
-      } else if (parseResponse) {
-        let jsonString = JSON.stringify(obj);
-        content.innerHTML += `<p>${jsonString}</p>`;
-      } else {
-        content.innerHTML += '<p>Meta Data Received</p>';
+        if (obj.message) {
+          let jsonString = obj.message;
+          content.innerHTML += `<p>${jsonString}</p>`;
+        } else if (parseResponse) {
+          let jsonString = JSON.stringify(obj);
+          content.innerHTML += `<p>${jsonString}</p>`;
+        } else {
+          content.innerHTML += '<p>Meta Data Received</p>';
+        }
       }
 
       console.log(obj);
@@ -70,80 +75,80 @@
     };
 
     const requestAuthor = async (authorForm) => {
-    const url = authorForm.getAttribute('action');
-    const method = authorForm.getAttribute('method');
+      const url = authorForm.getAttribute('action');
+      const method = authorForm.getAttribute('method');
 
-    const author = authorForm.querySelector('#authorField').value;
+      const author = authorForm.querySelector('#authorField').value;
 
-    const response = await fetch(`${url}?author=${encodeURIComponent(author)}`, {
+      const response = await fetch(`${url}?author=${encodeURIComponent(author)}`, {
         method: method,
         headers: {
-            'Accept': 'application/json',
+          'Accept': 'application/json',
         },
-    });
+      });
 
-    handleResponse(response, true);
-};
+      handleResponse(response, true);
+    };
 
-const requestBook = async (getBookForm) => {
-    const url = getBookForm.getAttribute('action');
-    const method = getBookForm.getAttribute('method');
+    const requestBook = async (getBookForm) => {
+      const url = getBookForm.getAttribute('action');
+      const method = getBookForm.getAttribute('method');
 
-    const title = getBookForm.querySelector('#titleField').value;
+      const title = getBookForm.querySelector('#titleField').value;
 
-    const response = await fetch(`${url}?title=${encodeURIComponent(title)}`, {
+      const response = await fetch(`${url}?title=${encodeURIComponent(title)}`, {
         method: method,
         headers: {
-            'Accept': 'application/json',
+          'Accept': 'application/json',
         },
-    });
+      });
 
-    handleResponse(response, true);
-};
+      handleResponse(response, true);
+    };
 
-const rateBook = async (rateBookForm) => {
-  const url = rateBookForm.getAttribute('action');
-  const method = rateBookForm.getAttribute('method');
+    const rateBook = async (rateBookForm) => {
+      const url = rateBookForm.getAttribute('action');
+      const method = rateBookForm.getAttribute('method');
 
-  const title = rateBookForm.querySelector('#rateTitleField').value;
-  const rating = rateBookForm.querySelector('#ratingField').value;
+      const title = rateBookForm.querySelector('#rateTitleField').value;
+      const rating = rateBookForm.querySelector('#ratingField').value;
 
-  const formData = `title=${encodeURIComponent(title)}&rating=${encodeURIComponent(rating)}`;
+      const formData = `title=${encodeURIComponent(title)}&rating=${encodeURIComponent(rating)}`;
 
-  let response = await fetch(url, {
-    method: method,
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Accept': 'application/json',
-    },
-    body: formData,
-  });
+      let response = await fetch(url, {
+        method: method,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json',
+        },
+        body: formData,
+      });
 
-  handleResponse(response);
-};
+      handleResponse(response);
+    };
 
-const addNewBook = async (addBookForm) => {
-  const url = addBookForm.getAttribute('action');
-  const method = addBookForm.getAttribute('method');
+    const addNewBook = async (addBookForm) => {
+      const url = addBookForm.getAttribute('action');
+      const method = addBookForm.getAttribute('method');
 
-  const title = addBookForm.querySelector('#titleField');
-  const author = addBookForm.querySelector('#authorField');
+      const title = addBookForm.querySelector('#titleField');
+      const author = addBookForm.querySelector('#authorField');
 
-  const formData = `title=${encodeURIComponent(title.value)}&author=${encodeURIComponent(author.value)}`;
+      const formData = `title=${encodeURIComponent(title.value)}&author=${encodeURIComponent(author.value)}`;
 
-  let response = await fetch(url, {
-    method: method,
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Accept': 'application/json',
-    },
-    body: formData,
-  });
+      let response = await fetch(url, {
+        method: method,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json',
+        },
+        body: formData,
+      });
 
-  handleResponse(response);
-};
+      handleResponse(response);
+    };
 
-const sendFetch = async (url) => {
+    const sendFetch = async (url) => {
       let response = await fetch(url);
 
       handleResponse(response);
