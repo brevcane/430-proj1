@@ -75,7 +75,7 @@
       ...
     ]
       </pre>
-      <p><strong>Example Usage:</strong> <code>GET /getAuthor?author=Author%20Name</code></p>
+      <p><strong>Example Usage:</strong> <code>GET /getAuthor?author=Name</code></p>
     </div>
 
     <div>
@@ -102,7 +102,7 @@
         }
       }
       </pre>
-      <p><strong>Example Usage:</strong> <code>GET /getBook?title=Book%20Title</code></p>
+      <p><strong>Example Usage:</strong> <code>GET /getBook?title=Title</code></p>
     </div>
 
     <div>
@@ -116,12 +116,10 @@
       <div class="param">
         <strong>author</strong> (string) - required
       </div>
-      <p><strong>Returns:</strong> A confirmation message in JSON format.</p>
+      <p><strong>Returns:</strong> An empty JSON object</p>
       <pre>
       Example:
-      {
-        "message": "Book added successfully."
-      }
+      { }
       </pre>
       <p><strong>Example Usage:</strong> <code>POST /addBook</code> with body <code>{"title": "New Book", "author": "Author Name"}</code></p>
     </div>
@@ -137,12 +135,10 @@
       <div class="param">
         <strong>rating</strong> (integer) - required (1-5)
       </div>
-      <p><strong>Returns:</strong> A confirmation message in JSON format.</p>
+      <p><strong>Returns:</strong> An empty JSON object</p>
       <pre>
       Example:
-      {
-        "message": "Book rated successfully."
-      }
+      { }
       </pre>
       <p><strong>Example Usage:</strong> <code>POST /rateBook</code> with body <code>{"title": "Book Title", "rating": 5}</code></p>
     </div>

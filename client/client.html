@@ -10,7 +10,9 @@
 const handleResponse = async (response, parseResponse) => {
   const contentHeader = document.querySelector('#content-header');
   const contentBody = document.querySelector('#content-body');
-  let obj = "";
+  let obj = {};
+  contentHeader.innerHTML = '';
+  contentBody.innerHTML = '';
 
   switch (response.status) {
     case 200:
@@ -26,32 +28,34 @@ const handleResponse = async (response, parseResponse) => {
       contentHeader.innerHTML = `<b>Bad Request:</b>`;
       break;
     case 404:
-      contentHeader.innerHTML = `<b>Not Found</b>`;
+      contentHeader.innerHTML = `<b>Not Found:</b>`;
       break;
     case 409:
-      contentHeader.innerHTML = `<b>Conflict</b>`;
+      contentHeader.innerHTML = `<b>Conflict:</b>`;
       break;
     default:
       contentHeader.innerHTML = `<b>Error code not implemented.</b>`;
       break;
   }
 
+
   if (response.status !== 204) {
     obj = await response.json();
 
-    if(obj.books) {
+    if (obj.books) {
       let jsonString = JSON.stringify(obj.books, null, 2);
       contentBody.innerHTML = `<pre>${jsonString}</pre>`;
     } else if (obj.message) {
-      let jsonString = obj.message;
-      contentBody.innerHTML = `<p>${jsonString}</p>`;
+      let jsonString = JSON.stringify(obj.message, null, 2);
+      contentBody.innerHTML = `<pre>${jsonString}</pre>`;
     } else if (parseResponse) {
-      let jsonString = JSON.stringify(obj);
-      contentBody.innerHTML = `<p>${jsonString}</p>`;
+      let jsonString = JSON.stringify(obj, null, 2);
+      contentBody.innerHTML = `<pre>${jsonString}</pre>`;
     } else {
       contentBody.innerHTML = '<p>Meta Data Received</p>';
     }
   }
+  
 
   console.log(obj);
 }

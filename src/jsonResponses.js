@@ -56,11 +56,8 @@ const addBook = (request, response) => {
   }
 
   if (responseCode === 201) {
-    responseJSON.message = 'Created Successfully';
-    return respond(request, response, responseCode, responseJSON);
+    return respond(request, response, responseCode, {});
   }
-
-  return respond(request, response, responseCode, {});
 };
 
 // GetBooks function
@@ -150,14 +147,13 @@ const getBook = (request, response) => {
 // RateBook function
 const rateBook = (request, response) => {
   const responseJSON = {};
-  let responseCode = 400;
 
   const { title, rating } = request.body;
 
-  if (!title || rating === undefined) {
+  if (!title || !rating) {
     responseJSON.message = 'Title and rating (1-5) are required.';
     responseJSON.id = 'rateBookMissingParams';
-    return respond(request, response, responseCode, responseJSON);
+    return respond(request, response, 400, responseJSON);
   }
 
   const book = findBookByTitle(title);
@@ -167,15 +163,9 @@ const rateBook = (request, response) => {
     return respond(request, response, 404, responseJSON); 
   }
 
-  if (rating < 1 || rating > 5) {
-    responseJSON.message = 'Rating must be between 1 and 5.';
-    return respond(request, response, 400, responseJSON);
-  }
-
   book.rating = rating; 
-  responseCode = 204; 
 
-  return respond(request, response, responseCode, {});
+  return respond(request, response, 204, {});
 };
 
 
