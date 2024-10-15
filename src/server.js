@@ -51,6 +51,8 @@ const handleGet = (request, response, parsedUrl) => {
     htmlHandler.getDoc(request, response);
   } else if (parsedUrl.pathname === '/apiDoc.css') {
     htmlHandler.getDocCSS(request, response);
+  } else if (parsedUrl.pathname === '/hortonb-proj1-doc.pdf') {
+    htmlHandler.getPDF(request, response);
   } else {
     htmlHandler.getIndex(request, response);
   }
